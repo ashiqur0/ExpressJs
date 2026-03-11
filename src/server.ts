@@ -1,7 +1,8 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
@@ -44,10 +45,16 @@ const initDb = async () => {
 
 initDb();
 
-// middleware
+// logger middleware
+const logger = (req: Request, res: Response, next: NextFunction) => {
+  const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
 
+  fs.writeFileSync('./src/logs.txt', log, { flag: 'a'});
 
-app.get('/', (req: Request, res: Response) => {
+  next();
+}
+
+app.get('/', logger, (req: Request, res: Response) => {
   res.send('Hello Next Level Developer!');
 });
 
@@ -218,7 +225,7 @@ app.use((req: Request, res: Response) => {
     message: 'Route not found',
     path: req.path
   });
-})
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
