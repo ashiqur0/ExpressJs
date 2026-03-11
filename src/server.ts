@@ -3,6 +3,7 @@ import config from './config';
 import initDb, { pool } from './config/db';
 import logger from './middleware/logger';
 import { userRouter } from './modules/user/user.routes';
+import { todoRouter } from './modules/todo/todo.routes';
 
 const port = config.port || 5000;
 const app = express();
@@ -15,31 +16,7 @@ app.get('/', logger, (req: Request, res: Response) => {
 });
 
 app.use('/users', userRouter);
-
-app.delete('/users/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
-
-    if (result.rowCount === 0) {
-      res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: 'User deleted successfully',
-        data: result.rows
-      });
-    }
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
+app.use('/todo', todoRouter);
 
 // todos CRUD
 app.post('/todos', async (req: Request, res: Response) => {
