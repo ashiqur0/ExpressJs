@@ -49,7 +49,7 @@ initDb();
 const logger = (req: Request, res: Response, next: NextFunction) => {
   const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
 
-  fs.writeFileSync('./src/logs.txt', log, { flag: 'a'});
+  fs.writeFileSync('./src/logs.txt', log, { flag: 'a' });
 
   next();
 }
@@ -183,7 +183,7 @@ app.post('/todos', async (req: Request, res: Response) => {
   const { user_id, title } = req.body;
   try {
     const result = await pool.query(`
-      INSERT INTO todos(user_id, title) VALUES ($1, $2) RETURNING *`, 
+      INSERT INTO todos(user_id, title) VALUES ($1, $2) RETURNING *`,
       [user_id, title]
     );
 
@@ -209,6 +209,34 @@ app.get('/todos', async (req: Request, res: Response) => {
       message: 'Todos retrieved successfully',
       data: result.rows
     })
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      details: error
+    })
+  }
+});
+
+app.get('/todos/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(`SELECT * FROM todos WHERE id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "Todo not found"
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'Todo retrieved successfully',
+        data: result.rows[0]
+      })
+    }
   } catch (error: any) {
     res.status(500).json({
       success: false,
