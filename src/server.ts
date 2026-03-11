@@ -44,6 +44,9 @@ const initDb = async () => {
 
 initDb();
 
+// middleware
+
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello Next Level Developer!');
 });
