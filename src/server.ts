@@ -1,18 +1,15 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { Pool } from 'pg';
-import dotenv from 'dotenv';
-import path from 'path';
 import fs from 'fs';
+import config from './config';
 
-dotenv.config({ path: path.join(process.cwd(), '.env') });
-
+const port = config.port || 5000;
 const app = express();
-const port = 5000;
 app.use(express.json()); // parser for json data
 
 // Database connection configuration
 const pool = new Pool({
-  connectionString: `${process.env.CONNECTION_STR}`
+  connectionString: config.connection_str
 });
 
 const initDb = async () => {
