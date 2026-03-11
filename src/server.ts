@@ -9,6 +9,7 @@ import { authRoutes } from './modules/auth/auth.routes';
 const port = config.port || 5000;
 const app = express();
 app.use(express.json()); // parser for json data
+app.use(express.urlencoded({ extended: true })); // parser for form data
 
 // initialize database
 initDb();
