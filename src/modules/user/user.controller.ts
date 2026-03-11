@@ -39,7 +39,35 @@ const getUsers = async (req: Request, res: Response) => {
   }
 }
 
+const getSingleUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    // const result = await userServices.getSingleUser(id!);
+    const result = await userServices.getSingleUser(id as string);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'User retrieved successfully',
+        data: result.rows[0]
+      });
+    }
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 export const userControllers = {
     createUser,
     getUsers,
+    getSingleUser,
+
 }
