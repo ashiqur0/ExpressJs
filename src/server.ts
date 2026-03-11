@@ -16,47 +16,7 @@ app.get('/', logger, (req: Request, res: Response) => {
 });
 
 app.use('/users', userRouter);
-app.use('/todo', todoRouter);
-
-// todos CRUD
-app.post('/todos', async (req: Request, res: Response) => {
-  const { user_id, title } = req.body;
-  try {
-    const result = await pool.query(`
-      INSERT INTO todos(user_id, title) VALUES ($1, $2) RETURNING *`,
-      [user_id, title]
-    );
-
-    res.status(201).json({
-      success: true,
-      message: 'Todo created successfully',
-      data: result.rows[0]
-    })
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    })
-  }
-});
-
-app.get('/todos', async (req: Request, res: Response) => {
-  try {
-    const result = await pool.query(`SELECT * FROM todos`);
-
-    res.status(200).json({
-      success: true,
-      message: 'Todos retrieved successfully',
-      data: result.rows
-    })
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      details: error
-    })
-  }
-});
+app.use('/todos', todoRouter);
 
 app.get('/todos/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
