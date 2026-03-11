@@ -18,64 +18,6 @@ app.get('/', logger, (req: Request, res: Response) => {
 app.use('/users', userRouter);
 app.use('/todos', todoRouter);
 
-app.get('/todos/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`SELECT * FROM todos WHERE id = $1`,
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "Todo not found"
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: 'Todo retrieved successfully',
-        data: result.rows[0]
-      })
-    }
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      details: error
-    })
-  }
-});
-
-app.put('/todos/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { user_id, title } = req.body;
-  try {
-    const result = await pool.query(`UPDATE todos SET user_id=$1, title=$2 WHERE id=$3 RETURNING *`,
-      [user_id, title, id]
-    );
-
-    if (result.rows.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "Todo not found",
-        data: result.rows
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: 'Todo updated successfully',
-        data: result.rows[0]
-      })
-    }
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      details: error
-    })
-  }
-});
-
 app.delete('/todos/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
