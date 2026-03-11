@@ -18,33 +18,6 @@ app.get('/', logger, (req: Request, res: Response) => {
 app.use('/users', userRouter);
 app.use('/todos', todoRouter);
 
-app.delete('/todos/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`DELETE FROM todos WHERE id = $1`, [id]);
-
-    if (result.rowCount === 0) {
-      res.status(404).json({
-        success: false,
-        message: 'Todo not found',
-        data: result.rows
-      });
-    } else {
-      res.status(200).json({
-        success: true,
-        message: 'Todo delelted successfully',
-        data: result.rows
-      })
-    }
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      details: error
-    })
-  }
-});
-
 // not found route
 app.use((req: Request, res: Response) => {
   res.status(404).json({
