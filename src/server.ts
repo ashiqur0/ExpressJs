@@ -14,7 +14,6 @@ app.get('/', logger, (req: Request, res: Response) => {
   res.send('Hello Next Level Developer!');
 });
 
-// users CRUD
 app.use('/users', userRouter);
 
 app.delete('/users/:id', async (req: Request, res: Response) => {
