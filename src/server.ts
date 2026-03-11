@@ -1,23 +1,13 @@
 import express, { NextFunction, Request, Response } from 'express';
-
-import fs from 'fs';
 import config from './config';
 import initDb, { pool } from './config/db';
+import logger from './middleware/logger';
 
 const port = config.port || 5000;
 const app = express();
 app.use(express.json()); // parser for json data
 
 initDb();
-
-// logger middleware
-const logger = (req: Request, res: Response, next: NextFunction) => {
-  const log = `[${new Date().toISOString()}] ${req.method} ${req.path}\n`;
-
-  fs.writeFileSync('./src/logs.txt', log, { flag: 'a' });
-
-  next();
-}
 
 app.get('/', logger, (req: Request, res: Response) => {
   res.send('Hello Next Level Developer!');
