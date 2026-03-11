@@ -1,44 +1,12 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { Pool } from 'pg';
+
 import fs from 'fs';
 import config from './config';
+import initDb, { pool } from './config/db';
 
 const port = config.port || 5000;
 const app = express();
 app.use(express.json()); // parser for json data
-
-// Database connection configuration
-const pool = new Pool({
-  connectionString: config.connection_str
-});
-
-const initDb = async () => {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL,
-      email VARCHAR(150) NOT NULL UNIQUE,
-      age INT,
-      phone VARCHAR(20),
-      address TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS todos (
-      id SERIAL PRIMARY KEY,
-      user_id INT REFERENCES users(id) ON DELETE CASCADE,
-      title VARCHAR(200) NOT NULL,
-      description TEXT,
-      completed BOOLEAN DEFAULT FALSE,
-      due_date DATE,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    )
-    `)
-}
 
 initDb();
 
